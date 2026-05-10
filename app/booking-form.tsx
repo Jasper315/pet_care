@@ -2,12 +2,22 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-function getToday() {
-  return new Date().toISOString().split("T")[0];
+function getTomorrowAtNineThirty() {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  date.setHours(9, 30, 0, 0);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 export function BookingForm() {
-  const [minimumDate, setMinimumDate] = useState(getToday);
+  const [defaultDateTime, setDefaultDateTime] = useState(getTomorrowAtNineThirty);
   const [toastVisible, setToastVisible] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -24,7 +34,7 @@ export function BookingForm() {
     event.preventDefault();
     setToastVisible(true);
     formRef.current?.reset();
-    setMinimumDate(getToday());
+    setDefaultDateTime(getTomorrowAtNineThirty());
   }
 
   return (
@@ -53,8 +63,8 @@ export function BookingForm() {
           </select>
         </div>
         <div className="field">
-          <label htmlFor="date">期望日期</label>
-          <input id="date" name="date" type="date" required min={minimumDate} />
+          <label htmlFor="date">期望日期时间</label>
+          <input id="date" name="date" type="datetime-local" required min={defaultDateTime} defaultValue={defaultDateTime} />
         </div>
         <div className="field">
           <label htmlFor="time">期望时段</label>
